@@ -66,7 +66,7 @@ async function run(){
                 }
             }
             const cursor = reviewCollection.find(query)
-            const review = await cursor.toArray()
+            const review = await cursor.sort({time:-1}).toArray()
             res.send(review)
         })
 
@@ -80,7 +80,7 @@ async function run(){
                 }
             }
             const cursor = reviewCollection.find(query)
-            const review = await cursor.toArray()
+            const review = await cursor.sort({time:-1}).toArray()
             res.send(review)
         })
 
