@@ -50,6 +50,25 @@ async function run(){
             const result = await serviceCollection.insertOne(addservices)
             res.send(result)
         })
+        //review add
+        app.post('/review', async(req, res)=>{
+            const review = req.body
+            const result = await reviewCollection.insertOne(review)
+            res.send(result)
+        })
+
+        app.get('/review', async(req, res) =>{
+            // console.log(req.query)
+            let query = {}
+            if(req.query.serviceId){
+                query = {
+                    serviceId: req.query.serviceId
+                }
+            }
+            const cursor = reviewCollection.find(query)
+            const review = await cursor.toArray()
+            res.send(review)
+        })
      }
      finally{
 
