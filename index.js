@@ -23,7 +23,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 function verifyJWT(req, res, next) {
     const authHeader = req.headers.authorization;
-     console.log(authHeader)
+  
     if (!authHeader) {
         return res.status(401).send({ message: 'unauthorized access' });
     }
@@ -34,7 +34,6 @@ function verifyJWT(req, res, next) {
             return res.status(403).send({ message: 'Forbidden access' });
         }
         req.decoded = decoded;
-        console.log(req.decoded)
         next();
     })
 }
@@ -56,7 +55,7 @@ async function run(){
             const services = await cursor.toArray()
             res.send(services)
         })
-        app.get('/servicesAll/:id', async (req, res) => {
+        app.get('/servicesAll/:id',  async (req, res) => {
             const id = req.params.id
             const query = { _id: ObjectId(id) }
             const service = await serviceCollection.findOne(query)
@@ -64,13 +63,13 @@ async function run(){
         })
 
         //add services
-        app.post('/servicesAll', async(req, res) =>{
+        app.post('/servicesAll',  async(req, res) =>{
             const addservices = req.body;
             const result = await serviceCollection.insertOne(addservices)
             res.send(result)
         })
         //review add
-        app.post('/review', async(req, res)=>{
+        app.post('/review',  async(req, res)=>{
             const review = req.body
             const result = await reviewCollection.insertOne(review)
             res.send(result)
@@ -101,14 +100,11 @@ async function run(){
         //my review
         app.get('/reviews',verifyJWT, async(req, res) =>{
             const decoded = req.decoded;
-            // console.log(decoded)
-            
             if(decoded.email !== req.query.email){
                 res.status(403).send({message: 'unauthorized access'})
             }
 
             let query = {}
-            // console.log(req.query)
             if (req.query.email) {
                 query = {
                     email: req.query.email
@@ -127,12 +123,11 @@ async function run(){
         })
 
         //update review
-        app.patch('/reviewsupdate/:id', async (req, res) => {
+        app.patch('/reviewsupdate/:id',  async (req, res) => {
          
             const id = req.params.id;
             const reviews = req.body
             const { review } = reviews
-            console.log(review)
             const query = {_id: ObjectId(id) };
             const options = { upsert: true };
             const updateDoc = {
@@ -142,13 +137,12 @@ async function run(){
             };
             const result = await reviewCollection.updateOne(query, updateDoc, options);
             res.send(result)
-            // console.log(result)
+       
         })
 
         //jwt token create
         app.post('/jwt', (req, res) => {
             const user = req.body;
-            // console.log(user)
             const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1d' })
             res.send({ token })
            
